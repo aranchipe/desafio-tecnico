@@ -1,6 +1,7 @@
 const knex = require('../database/connection');
 const api = require('../services/axios')
 const { schemaCadastroUniversidade } = require("../validations/schemaCadastroUniversidade");
+const { schemaAttUniversidade } = require("../validations/schemaAttUniversidade");
 
 
 const criacaoDaTabela = async (req, res) => {
@@ -32,7 +33,7 @@ const criacaoDaTabela = async (req, res) => {
     return res.status(200).json(universidades)
 }
 
-const listarUniversidades = async (req, res) => {
+const listarUniv = async (req, res) => {
     const { country, page } = req.query
 
     try {
@@ -73,7 +74,7 @@ const listarUniversidades = async (req, res) => {
     }
 }
 
-const obterUniversidade = async (req, res) => {
+const obterUniv = async (req, res) => {
     const { id } = req.params
 
     try {
@@ -92,7 +93,7 @@ const obterUniversidade = async (req, res) => {
     }
 }
 
-const cadastrarUniversidade = async (req, res) => {
+const cadastrarUniv = async (req, res) => {
     const { alpha_two_code, web_pages, name, country, domains, state_province } = req.body
 
     try {
@@ -121,7 +122,7 @@ const cadastrarUniversidade = async (req, res) => {
             return res.status(400).json({ "mensagem": "Não foi possível cadastrar esta universidade" })
         }
 
-        return res.status(200).json(univCadastrada.rows)
+        return res.status(200).json('Universidade cadastrada com sucesso')
     } catch (error) {
         return res.status(400).json({ "messagem": error.message })
 
@@ -129,9 +130,79 @@ const cadastrarUniversidade = async (req, res) => {
 
 }
 
+const atualizarUniv = async (req, res) => {
+    const { id } = req.params
+
+    const { web_pages, name, domains } = req.body
+
+    try {
+        await schemaAttUniversidade.validate(req.body)
+
+        const univEncontrada = await knex('universidades').where({ id })
+
+        if (univEncontrada.length === 0) {
+            return res.status(404).json("Universidade não encontrada")
+        }
+
+        const univsComMesmoNome = await knex('universidades').where({ name })
+
+        const univsDuplicadas = univsComMesmoNome.filter((item) => {
+            return item.country === univEncontrada[0].country && item.state_province === univEncontrada[0].state_province
+        })
+
+        if (univsDuplicadas.length !== 0) {
+            return res.status(400).json('Já existe universidade com o mesmo nome, estado e país')
+        }
+
+        const univCadastrada = await knex('universidades')
+            .update({
+                web_pages,
+                name,
+                domains
+            })
+            .where({ id })
+
+        if (univCadastrada.length === 0) {
+            return res.status(400).json('Não foi possível atualizar os dados da universidade')
+        }
+
+        return res.status(200).json('Universidade atualizada com sucesso')
+    } catch (error) {
+        return res.status(400).json({ "messagem": error.message })
+    }
+}
+
+const deletarUniv = async (req, res) => {
+    const { id } = req.params
+
+    try {
+        const universidade = await knex('universidades')
+            .where({ id })
+            .first()
+
+        if (!universidade) {
+            return res.status(404).json({ "mensagem": "Universidade não encontrada" })
+        }
+
+        const univDeletada = await knex('universidades').del().where({ id })
+
+        if (univDeletada.length === 0) {
+            return res.status(400).json('Não foi possível deletar a universidade')
+        }
+
+        return res.status(200).json('Universidade deletada com sucesso')
+    } catch (error) {
+        return res.status(400).json({ "messagem": error.message })
+    }
+
+}
+
+
 module.exports = {
     criacaoDaTabela,
-    listarUniversidades,
-    obterUniversidade,
-    cadastrarUniversidade
+    listarUniv,
+    obterUniv,
+    cadastrarUniv,
+    atualizarUniv,
+    deletarUniv
 }
