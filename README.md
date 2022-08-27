@@ -11,7 +11,7 @@
 
 ## Endpoints
 
-### GET - Criação da Collection/Tabela
+### GET /tabela - Criação da Collection/Tabela
 
 #### Dados Enviados
  - Neste endpoint não haverá body
