@@ -32,6 +32,7 @@
  - Todas as universidades do banco de dados caso não tenha query params
  - As universidades de um determinado país caso tenha o query params "country"
  - As universidades de uma determinada página caso tenha o query params "page"
+ 
  OBS: Lembrando que cada página tem 20 universidades
 
 
