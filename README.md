@@ -50,11 +50,17 @@
 
 #### Dados Enviados
  - Body:
+ 
  -- domains
- -- alpha_two_code
+ 
+ -- alpha_two_code 
+ 
  -- country
- -- web_pages
- -- name	
+ 
+ -- web_pages 
+ 
+ -- name	 
+ 
  -- state_province
  
  ##### Validações
@@ -76,8 +82,11 @@
 #### Dados Enviados
  - "id" como parâmetro de rota
  - body:
+ 
  -- web_pages
+ 
  -- name
+ 
  -- domains
  
  ##### Validações
