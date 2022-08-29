@@ -2,7 +2,7 @@ const express = require('express');
 const { criacaoDaTabela, listarUniv, obterUniv, cadastrarUniv, atualizarUniv, deletarUniv } = require('./controllers/universidades');
 const rotas = express()
 
-rotas.get('/tabela', criacaoDaTabela)
+rotas.post('/tabela', criacaoDaTabela)
 rotas.get('/universities', listarUniv)
 rotas.get('/universities/:id', obterUniv)
 rotas.post('/universities', cadastrarUniv)
